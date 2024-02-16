@@ -43,7 +43,7 @@ const louvores = [
   { nome: "Yahweh", tom: "G", ministro: "Keila" },
   { nome: "Jesus em tua presenca", tom: "C", ministro: "Keila" },
   { nome: "Jesus em tua presenca", tom: "C", ministro: "Eduarda" },
-  { nome: "Can�o ao cordeiro", tom: "G", ministro: "Keila" },
+  { nome: "Cancao ao cordeiro", tom: "G", ministro: "Keila" },
   { nome: "Eu vou construir", tom: "C", ministro: "Keila" },
   { nome: "Vem derrama", tom: "C", ministro: "Keila" },
   { nome: "Faz chover (abra as comportas dos ceus...)", tom: "C", ministro: "Keila" },
@@ -174,40 +174,74 @@ const louvores = [
 
 console.log(louvores);
 
-
-    // Adicione os demais louvores aqui
-
-
 function buscarLouvores() {
     const tomSelecionado = document.getElementById("Tom").value;
     const ministroSelecionado = document.getElementById("Ministro").value;
 
     const louvoresFiltrados = louvores.filter(louvor => {
         return (tomSelecionado === 'Qualquer' || louvor.tom === tomSelecionado) &&
-               (ministroSelecionado === 'Qualquer' || louvor.ministro === ministroSelecionado);
+            (ministroSelecionado === 'Qualquer' || louvor.ministro === ministroSelecionado);
     });
 
     mostrarLouvores(louvoresFiltrados);
 }
 
 function mostrarLouvores(listaLouvores) {
-    const listBoxLouvores = document.getElementById("ListBoxLouvores");
-    listBoxLouvores.innerHTML = "";
+    const tabelaLouvores = document.getElementById("tabelaLouvores");
+    tabelaLouvores.innerHTML = "";
+
+    // Criação dos títulos da tabela
+    const tituloRow = document.createElement("tr");
+    const tituloNome = document.createElement("th");
+    tituloNome.textContent = "Nome";
+    const tituloTom = document.createElement("th");
+    tituloTom.textContent = "Tom";
+    const tituloMinistro = document.createElement("th");
+    tituloMinistro.textContent = "Ministro";
+    tituloRow.appendChild(tituloNome);
+    tituloRow.appendChild(tituloTom);
+    tituloRow.appendChild(tituloMinistro);
+    tabelaLouvores.appendChild(tituloRow);
 
     if (listaLouvores.length === 0) {
-        const mensagem = document.createElement("p");
-        mensagem.textContent = "Nenhum louvor encontrado.";
-        listBoxLouvores.appendChild(mensagem);
+        const mensagem = document.createElement("tr");
+        const colunaMensagem = document.createElement("td");
+        colunaMensagem.textContent = "Nenhum louvor encontrado.";
+        colunaMensagem.setAttribute("colspan", "3"); // Colspan para ocupar as três colunas
+        mensagem.appendChild(colunaMensagem);
+        tabelaLouvores.appendChild(mensagem);
     } else {
-        listaLouvores.forEach(louvor => {
-            const itemLouvor = document.createElement("p");
-            itemLouvor.textContent = louvor.nome + " - " + louvor.tom + " - " + louvor.ministro;
-            listBoxLouvores.appendChild(itemLouvor);
+        listaLouvores.forEach((louvor, index) => {
+            const linhaLouvor = document.createElement("tr");
+            linhaLouvor.id = `louvor-${index}`; // Adiciona um identificador único para a linha
+
+            const colunaNome = document.createElement("td");
+            colunaNome.textContent = louvor.nome;
+            linhaLouvor.appendChild(colunaNome);
+
+            const colunaTom = document.createElement("td");
+            colunaTom.textContent = louvor.tom;
+            linhaLouvor.appendChild(colunaTom);
+
+            const colunaMinistro = document.createElement("td");
+            colunaMinistro.textContent = louvor.ministro;
+            linhaLouvor.appendChild(colunaMinistro);
+
+            // Adiciona o evento de clique à linha
+            linhaLouvor.addEventListener("click", function() {
+                const louvorNome = louvor.nome.replace(/\s/g, "+"); // Substitui espaços por "+" no nome do louvor
+                const url = `https://www.letras.mus.br/?q=${louvorNome}#gsc.tab=0&gsc.q=${louvorNome}`;
+                window.location.href = url; // Redireciona para o URL do louvor
+            });
+
+            tabelaLouvores.appendChild(linhaLouvor);
         });
     }
 }
 
+
+
 // Ao carregar a página, mostramos todos os louvores
-window.onload = function() {
+window.onload = function () {
     mostrarLouvores(louvores);
 };
